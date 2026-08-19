@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -13,124 +12,140 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [show, setShow] = useState(false);
+  const [active, setActive] = useState("");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setShow(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
+    const secs = document.querySelectorAll("section[id]");
+    const obs = new IntersectionObserver(
+      (e) => {
+        e.forEach((x) => {
+          if (x.isIntersecting) setActive(x.target.id);
         });
       },
-      { rootMargin: "-40% 0px -55% 0px" }
+      { rootMargin: "-35% 0px -60% 0px" }
     );
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    secs.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
   }, []);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-bg/80 backdrop-blur-xl border-b border-border"
-          : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto max-w-[1200px] flex items-center justify-between px-6 lg:px-10 h-[60px]">
-        {/* Logo */}
-        <a href="#top" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-cyan flex items-center justify-center shadow-lg shadow-accent/20 group-hover:shadow-accent/40 transition-shadow">
-            <span className="font-display font-bold text-white text-[13px]">N</span>
-          </div>
-          <span className="font-display font-semibold text-[16px] tracking-[-0.02em]">
-            Nexora
-          </span>
-        </a>
+    <>
+      {/* Hero'da gosterilen basit logo - scroll yokken */}
+      <div
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+          show ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 lg:px-10 h-[72px] max-w-[1200px] mx-auto">
+          <a href="#top" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-cyan flex items-center justify-center">
+              <span className="font-display font-bold text-white text-[13px]">N</span>
+            </div>
+            <span className="font-display font-semibold text-[16px] tracking-[-0.02em]">
+              Nexora
+            </span>
+          </a>
+        </div>
+      </div>
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center">
-          <div className="flex items-center gap-0.5 p-1 rounded-xl bg-white/[0.03] border border-border/50">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className={`relative px-4 py-[7px] text-[13px] font-medium rounded-lg transition-all duration-200 ${
-                  activeSection === l.href.replace("#", "")
-                    ? "text-text"
-                    : "text-text-dim hover:text-text-muted"
-                }`}
-              >
-                {activeSection === l.href.replace("#", "") && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className="absolute inset-0 bg-white/[0.06] border border-white/[0.06] rounded-lg"
-                    transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
-                  />
-                )}
-                <span className="relative z-10">{l.label}</span>
-              </a>
-            ))}
-          </div>
+      {/* Scroll'dan sonra gorunen floating nav */}
+      <motion.div
+        initial={false}
+        animate={{ y: show ? 0 : -100, opacity: show ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
+      >
+        <nav className="flex items-center gap-2 px-2 py-2 rounded-2xl bg-[#131319]/90 backdrop-blur-xl border border-white/[0.06] shadow-2xl shadow-black/50">
+          <a href="#top" className="flex items-center gap-2 px-3 py-1.5 mr-1">
+            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-accent to-cyan flex items-center justify-center">
+              <span className="font-display font-bold text-white text-[10px]">N</span>
+            </div>
+          </a>
+
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className={`relative px-3.5 py-[6px] text-[12px] font-medium rounded-xl transition-colors duration-200 ${
+                active === l.href.replace("#", "")
+                  ? "text-white"
+                  : "text-[#5c5c6b] hover:text-[#9d9daa]"
+              }`}
+            >
+              {active === l.href.replace("#", "") && (
+                <motion.div
+                  layoutId="pill"
+                  className="absolute inset-0 bg-white/[0.07] rounded-xl"
+                  transition={{ type: "spring", duration: 0.35, bounce: 0.12 }}
+                />
+              )}
+              <span className="relative z-10">{l.label}</span>
+            </a>
+          ))}
 
           <a
             href="#iletisim"
-            className="ml-4 px-5 py-[7px] text-[13px] font-semibold bg-accent text-white rounded-lg hover:bg-accent-soft transition-all duration-200 shadow-md shadow-accent/15 hover:shadow-accent/30"
+            className="ml-1 px-4 py-[6px] text-[12px] font-semibold bg-accent text-white rounded-xl hover:bg-accent-2 transition-colors"
           >
             Katil
           </a>
-        </div>
+        </nav>
+      </motion.div>
 
-        {/* Mobile */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden p-2 text-text-muted hover:text-text"
-          aria-label="Menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </nav>
+      {/* Mobile */}
+      <button
+        onClick={() => setOpen(!open)}
+        className={`fixed top-4 right-4 z-50 md:hidden p-2.5 rounded-xl bg-[#131319]/90 backdrop-blur-xl border border-white/[0.06] text-[#9d9daa] hover:text-white transition-all ${
+          show || open ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        aria-label="Menu"
+      >
+        {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+      </button>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden bg-bg/95 backdrop-blur-xl border-b border-border"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-[#07070a]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center"
           >
-            <div className="px-6 py-4 space-y-1">
-              {links.map((l) => (
-                <a
+            <div className="space-y-2">
+              {links.map((l, i) => (
+                <motion.a
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block px-3 py-2.5 text-sm text-text-muted hover:text-text rounded-lg hover:bg-white/[0.04] transition-colors"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                  className="block text-center px-8 py-4 text-xl font-display font-semibold text-[#9d9daa] hover:text-white transition-colors"
                 >
                   {l.label}
-                </a>
+                </motion.a>
               ))}
-              <a
+              <motion.a
                 href="#iletisim"
                 onClick={() => setOpen(false)}
-                className="block mt-3 px-3 py-2.5 bg-accent text-white text-sm font-semibold rounded-lg text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="block mt-6 mx-auto px-10 py-3.5 bg-accent text-white text-lg font-semibold rounded-xl text-center w-fit"
               >
                 Katil
-              </a>
+              </motion.a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

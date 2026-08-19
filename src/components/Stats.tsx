@@ -1,93 +1,54 @@
 "use client";
-
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-function AnimatedNum({
-  target,
-  suffix = "",
-  inView,
-  delay,
-}: {
-  target: number;
-  suffix?: string;
-  inView: boolean;
-  delay: number;
-}) {
-  const [val, setVal] = useState(0);
-
+function Num({ target, s = "", inView, d }: { target: number; s?: string; inView: boolean; d: number }) {
+  const [v, setV] = useState(0);
   useEffect(() => {
     if (!inView) return;
     const t = setTimeout(() => {
-      let start = 0;
-      const dur = 1800;
-      const inc = target / (dur / 16);
+      let st = 0;
+      const inc = target / 112;
       const iv = setInterval(() => {
-        start += inc;
-        if (start >= target) {
-          setVal(target);
-          clearInterval(iv);
-        } else {
-          setVal(Math.floor(start));
-        }
+        st += inc;
+        if (st >= target) { setV(target); clearInterval(iv); } else setV(Math.floor(st));
       }, 16);
       return () => clearInterval(iv);
-    }, delay);
+    }, d);
     return () => clearTimeout(t);
-  }, [inView, target, delay]);
-
-  return (
-    <span>
-      {val.toLocaleString()}
-      {suffix}
-    </span>
-  );
+  }, [inView, target, d]);
+  return <span>{v.toLocaleString()}{s}</span>;
 }
 
 export default function Stats() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
+  const inView = useInView(ref, { once: true, margin: "-40px" });
   const items = [
-    { target: 2500, suffix: "+", label: "Uye" },
-    { target: 150, suffix: "+", label: "Proje" },
-    { target: 50, suffix: "+", label: "Etkinlik" },
-    { target: 30, suffix: "+", label: "Sehir" },
+    { t: 2500, s: "+", l: "Uye" },
+    { t: 150, s: "+", l: "Proje" },
+    { t: 50, s: "+", l: "Etkinlik" },
+    { t: 30, s: "+", l: "Sehir" },
   ];
-
   return (
-    <section className="relative py-24 md:py-32">
-      {/* Separator above */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-      <div className="mx-auto max-w-[1100px] px-6">
+    <section className="relative bg-bg">
+      <div className="relative mx-auto max-w-[1100px] px-6 py-20 md:py-28">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-12 rounded-3xl border border-border/60 bg-bg-raised/60"
+          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number] }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-10 rounded-3xl border border-white/[0.04] bg-bg-1"
         >
-          {items.map((item, i) => (
-            <div key={item.label} className="text-center">
-              <div className="font-display font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight bg-gradient-to-b from-text to-text-muted bg-clip-text text-transparent">
-                <AnimatedNum
-                  target={item.target}
-                  suffix={item.suffix}
-                  inView={inView}
-                  delay={i * 120}
-                />
+          {items.map((x, i) => (
+            <div key={x.l} className="text-center">
+              <div className="font-display font-bold text-[clamp(1.8rem,3.5vw,2.8rem)] tracking-tight bg-gradient-to-b from-white to-[#9d9daa] bg-clip-text text-transparent">
+                <Num target={x.t} s={x.s} inView={inView} d={i * 100} />
               </div>
-              <p className="text-text-dim text-[11px] font-mono uppercase tracking-[0.15em] mt-2">
-                {item.label}
-              </p>
+              <p className="text-[#5c5c6b] text-[10px] font-mono uppercase tracking-[0.2em] mt-2">{x.l}</p>
             </div>
           ))}
         </motion.div>
       </div>
-
-      {/* Separator below */}
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
     </section>
   );
 }
