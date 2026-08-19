@@ -77,8 +77,16 @@ export default function Features() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="ozellikler" className="py-28 md:py-40 relative">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="ozellikler" className="relative py-32 md:py-44">
+      {/* Section background */}
+      <div className="absolute inset-0 bg-bg-raised/40" />
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
+      {/* Corner accents */}
+      <div className="absolute top-8 left-8 w-20 h-20 border-t border-l border-accent/10 rounded-tl-3xl hidden lg:block" />
+      <div className="absolute bottom-8 right-8 w-20 h-20 border-b border-r border-cyan/10 rounded-br-3xl hidden lg:block" />
+
+      <div className="relative mx-auto max-w-[1100px] px-6">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 24 }}
@@ -86,7 +94,7 @@ export default function Features() {
           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
           className="mb-16 md:mb-20"
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-soft mb-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-soft mb-6">
             03 &mdash; Neler Sunuyoruz
           </p>
           <h2 className="font-display text-[clamp(2.2rem,4.5vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-balance">
@@ -108,7 +116,7 @@ export default function Features() {
                 delay: 0.1 + i * 0.06,
                 ease: [0.25, 0.4, 0.25, 1],
               }}
-              className={`group relative p-6 rounded-2xl border border-border hover:border-white/[0.1] hover:bg-white/[0.02] transition-all duration-300 ${
+              className={`group relative p-6 rounded-2xl border border-border/60 hover:border-white/[0.1] hover:bg-white/[0.02] transition-all duration-300 ${
                 f.wide ? "md:col-span-2" : ""
               }`}
             >

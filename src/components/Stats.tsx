@@ -56,14 +56,17 @@ export default function Stats() {
   ];
 
   return (
-    <section className="py-20 md:py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="relative py-24 md:py-32">
+      {/* Separator above */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+      <div className="mx-auto max-w-[1100px] px-6">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-12 rounded-3xl border border-border bg-bg-raised"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-12 rounded-3xl border border-border/60 bg-bg-raised/60"
         >
           {items.map((item, i) => (
             <div key={item.label} className="text-center">
@@ -75,13 +78,16 @@ export default function Stats() {
                   delay={i * 120}
                 />
               </div>
-              <p className="text-text-dim text-[12px] font-mono uppercase tracking-[0.15em] mt-1.5">
+              <p className="text-text-dim text-[11px] font-mono uppercase tracking-[0.15em] mt-2">
                 {item.label}
               </p>
             </div>
           ))}
         </motion.div>
       </div>
+
+      {/* Separator below */}
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
     </section>
   );
 }

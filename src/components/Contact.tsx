@@ -28,8 +28,12 @@ export default function Contact() {
   };
 
   return (
-    <section id="iletisim" className="py-28 md:py-40 relative">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="iletisim" className="relative py-32 md:py-44">
+      {/* Section background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-raised/40 via-bg-raised/20 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
+
+      <div className="relative mx-auto max-w-[1100px] px-6">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 24 }}
@@ -37,7 +41,7 @@ export default function Contact() {
           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
           className="mb-16 md:mb-20"
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-soft mb-5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent-soft mb-6">
             04 &mdash; Iletisim
           </p>
           <h2 className="font-display text-[clamp(2.2rem,4.5vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.02em] text-balance">
@@ -77,7 +81,7 @@ export default function Contact() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="group p-5 rounded-2xl border border-border hover:border-white/[0.08] hover:bg-white/[0.02] transition-all duration-300"
+                className="group p-5 rounded-2xl border border-border/60 hover:border-white/[0.08] hover:bg-white/[0.02] transition-all duration-300"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-white/[0.04] flex items-center justify-center shrink-0">
@@ -109,7 +113,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-3 p-6 md:p-8 rounded-3xl border border-border bg-bg-raised"
+            className="lg:col-span-3 p-6 md:p-8 rounded-3xl border border-border/60 bg-bg-raised/80 backdrop-blur-sm"
           >
             <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <div>
@@ -122,7 +126,7 @@ export default function Contact() {
                   required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border/60 text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
                   placeholder="Adin Soyadin"
                 />
               </div>
@@ -136,7 +140,7 @@ export default function Contact() {
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border/60 text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
                   placeholder="ornek@email.com"
                 />
               </div>
@@ -151,7 +155,7 @@ export default function Contact() {
                 required
                 value={form.subject}
                 onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border/60 text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all"
                 placeholder="Mesajinin konusu"
               />
             </div>
@@ -165,7 +169,7 @@ export default function Contact() {
                 rows={5}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-border/60 text-[14px] text-text placeholder:text-text-dim/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all resize-none"
                 placeholder="Mesajini buraya yaz..."
               />
             </div>
