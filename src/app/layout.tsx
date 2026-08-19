@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nexora Toplulugu | Gelistirici Ekosistemi",
+  title: "Nexora | Gelistirici Ekosistemi",
   description:
-    "Yazilim gelistiricilerini, tasarimcilarini ve teknoloji meraklilarini ayni cati altinda bulusturan kolektif bir gelistirici ekosistemi.",
+    "Yazilim gelistiricilerini, tasarimcilarini ve teknoloji meraklilarini ayni cati altinda bulusturan kolektif gelistirici ekosistemi.",
   openGraph: {
-    title: "Nexora Toplulugu",
-    description:
-      "Teknoloji dunyasinda gelecegi seklendiren projelerin ve basarili takimlarin dogdugu bir merkez.",
+    title: "Nexora | Gelistirici Ekosistemi",
+    description: "Teknoloji dunyasinda gelecegi seklendiren projelerin dogdugu merkez.",
     type: "website",
   },
 };
@@ -19,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr" className="antialiased">
-      <body className="min-h-screen bg-background text-foreground">
+    <html lang="tr">
+      <body className="grain">
         {children}
       </body>
     </html>

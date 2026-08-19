@@ -3,97 +3,83 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-function Counter({
+function AnimatedNum({
   target,
   suffix = "",
-  label,
-  delay,
   inView,
+  delay,
 }: {
   target: number;
   suffix?: string;
-  label: string;
-  delay: number;
   inView: boolean;
+  delay: number;
 }) {
-  const [count, setCount] = useState(0);
+  const [val, setVal] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
-    const timer = setTimeout(() => {
+    const t = setTimeout(() => {
       let start = 0;
-      const duration = 2000;
-      const increment = target / (duration / 16);
-      const interval = setInterval(() => {
-        start += increment;
+      const dur = 1800;
+      const inc = target / (dur / 16);
+      const iv = setInterval(() => {
+        start += inc;
         if (start >= target) {
-          setCount(target);
-          clearInterval(interval);
+          setVal(target);
+          clearInterval(iv);
         } else {
-          setCount(Math.floor(start));
+          setVal(Math.floor(start));
         }
       }, 16);
-      return () => clearInterval(interval);
+      return () => clearInterval(iv);
     }, delay);
-    return () => clearTimeout(timer);
+    return () => clearTimeout(t);
   }, [inView, target, delay]);
 
   return (
-    <div className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-gradient mb-2">
-        {count.toLocaleString()}
-        {suffix}
-      </div>
-      <div className="text-sm text-muted font-mono">{label}</div>
-    </div>
+    <span>
+      {val.toLocaleString()}
+      {suffix}
+    </span>
   );
 }
 
 export default function Stats() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
+  const items = [
+    { target: 2500, suffix: "+", label: "Uye" },
+    { target: 150, suffix: "+", label: "Proje" },
+    { target: 50, suffix: "+", label: "Etkinlik" },
+    { target: 30, suffix: "+", label: "Sehir" },
+  ];
 
   return (
-    <section className="py-24 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-6">
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="p-8 md:p-12 rounded-3xl glass relative overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-12 rounded-3xl border border-border bg-bg-raised"
         >
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-accent/10 blur-[100px]" />
-          <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8">
-            <Counter
-              target={2500}
-              suffix="+"
-              label="Uye"
-              delay={0}
-              inView={isInView}
-            />
-            <Counter
-              target={150}
-              suffix="+"
-              label="Proje"
-              delay={200}
-              inView={isInView}
-            />
-            <Counter
-              target={50}
-              suffix="+"
-              label="Etkinlik"
-              delay={400}
-              inView={isInView}
-            />
-            <Counter
-              target={30}
-              suffix="+"
-              label="Sehir"
-              delay={600}
-              inView={isInView}
-            />
-          </div>
+          {items.map((item, i) => (
+            <div key={item.label} className="text-center">
+              <div className="font-display font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight bg-gradient-to-b from-text to-text-muted bg-clip-text text-transparent">
+                <AnimatedNum
+                  target={item.target}
+                  suffix={item.suffix}
+                  inView={inView}
+                  delay={i * 120}
+                />
+              </div>
+              <p className="text-text-dim text-[12px] font-mono uppercase tracking-[0.15em] mt-1.5">
+                {item.label}
+              </p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

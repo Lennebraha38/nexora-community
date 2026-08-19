@@ -1,174 +1,212 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
 
-function AnimatedGrid() {
+function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
+  const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
-    let time = 0;
+    let id: number;
+    const dpr = window.devicePixelRatio || 1;
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.scale(dpr, dpr);
     };
     resize();
     window.addEventListener("resize", resize);
 
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number }[] = [];
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 2 + 1,
-        alpha: Math.random() * 0.5 + 0.1,
+    const dots: { x: number; y: number; vx: number; vy: number }[] = [];
+    const count = Math.min(60, Math.floor(window.innerWidth / 25));
+    for (let i = 0; i < count; i++) {
+      dots.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
       });
     }
 
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.005;
+    const loop = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
 
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      dots.forEach((d) => {
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x < 0 || d.x > w) d.vx *= -1;
+        if (d.y < 0 || d.y > h) d.vy *= -1;
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(99, 102, 241, ${p.alpha})`;
+        ctx.arc(d.x, d.y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(124, 58, 237, 0.25)";
         ctx.fill();
       });
 
-      particles.forEach((p1, i) => {
-        particles.slice(i + 1).forEach((p2) => {
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(99, 102, 241, ${0.08 * (1 - dist / 150)})`;
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.strokeStyle = `rgba(124, 58, 237, ${0.06 * (1 - dist / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
-        });
-      });
+        }
+      }
 
-      animationId = requestAnimationFrame(animate);
+      id = requestAnimationFrame(loop);
     };
-    animate();
+    loop();
 
     return () => {
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(id);
       window.removeEventListener("resize", resize);
     };
   }, []);
+
+  useEffect(() => {
+    const cleanup = draw();
+    return cleanup;
+  }, [draw]);
 
   return (
     <canvas
       ref={canvasRef}
       className="absolute inset-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
+      aria-hidden="true"
     />
   );
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: 0.15 + i * 0.12, ease: [0.25, 0.4, 0.25, 1] },
+  }),
+};
+
 export default function Hero() {
   return (
     <section
-      id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      id="top"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6"
     >
-      <div className="absolute inset-0 bg-grid" />
-      <AnimatedGrid />
+      <ParticleField />
 
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[120px] animate-float" />
-      <div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-neon/10 rounded-full blur-[100px]"
-        style={{ animationDelay: "3s", animation: "float 8s ease-in-out infinite" }}
-      />
+      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-accent/[0.04] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-cyan/[0.03] rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={0}
+          className="mb-8"
         >
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-sm text-muted font-mono">
-            &lt;topluluk /&gt; aktif ve buyuyor
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-border text-text-muted text-[12px] font-mono tracking-wide uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Topluluk aktif ve buyuyor
           </span>
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={1}
+          className="font-display font-bold text-[clamp(3rem,8vw,6.5rem)] leading-[0.92] tracking-[-0.03em] mb-6 text-balance"
         >
-          <span className="block text-foreground">Koddan</span>
-          <span className="block text-gradient">Ekosisteme.</span>
+          Koddan
+          <br />
+          <span className="bg-gradient-to-r from-accent via-accent-soft to-cyan bg-clip-text text-transparent">
+            Ekosisteme.
+          </span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-10 leading-relaxed"
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={2}
+          className="text-text-muted text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed"
         >
-          Yazilim gelistiricilerini, tasarimcilarini ve teknoloji meraklilarini
-          ayni cati altinda bulusturan kolektif bir gelistirici ekosistemi.
+          Yazilimcilarin takildigi an destek buldugu,
+          fikirlerini calisan projelere donusturdugu kolektif ekosistem.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={3}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
             href="#iletisim"
-            className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-accent to-accent-dark text-white rounded-xl font-medium text-lg hover:shadow-xl hover:shadow-accent/25 transition-all duration-300 hover:-translate-y-0.5"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 bg-accent text-white font-semibold text-[15px] rounded-xl hover:bg-accent-soft transition-all duration-300 hover:shadow-[0_0_30px_rgba(124,58,237,0.25)]"
           >
             Topluluga Katil
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <svg
+              className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </a>
           <a
             href="#ozellikler"
-            className="flex items-center gap-2 px-8 py-4 glass text-foreground rounded-xl font-medium text-lg hover:bg-white/10 transition-all duration-300"
+            className="inline-flex items-center px-8 py-3.5 text-text-muted text-[15px] font-medium rounded-xl border border-border hover:bg-white/[0.03] hover:text-text transition-all duration-300"
           >
             Neler Sunuyoruz?
           </a>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.5 }}
-          className="mt-20"
-        >
-          <a href="#misyon" className="inline-flex flex-col items-center gap-2 text-muted hover:text-accent transition-colors">
-            <span className="text-xs font-mono uppercase tracking-widest">Kesfet</span>
-            <ChevronDown className="w-5 h-5 animate-bounce" />
-          </a>
-        </motion.div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2"
+      >
+        <a
+          href="#misyon"
+          className="flex flex-col items-center gap-2 text-text-dim hover:text-accent-soft transition-colors"
+          aria-label="Asagi kaydir"
+        >
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Kesfet</span>
+          <motion.div
+            animate={{ y: [0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </motion.div>
+        </a>
+      </motion.div>
+
+      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
     </section>
   );
 }

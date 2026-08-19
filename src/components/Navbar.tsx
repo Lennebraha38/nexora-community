@@ -2,106 +2,92 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
-const navLinks = [
-  { label: "Ana Sayfa", href: "#hero" },
+const links = [
   { label: "Misyon", href: "#misyon" },
   { label: "Vizyon", href: "#vizyon" },
-  { label: "Ozellikler", href: "#ozellikler" },
+  { label: "Neler Sunuyoruz", href: "#ozellikler" },
   { label: "Iletisim", href: "#iletisim" },
 ];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "glass-strong shadow-lg shadow-accent/5"
-          : "bg-transparent"
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled ? "glass" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <motion.a
-            href="#hero"
-            className="flex items-center gap-2 group"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-neon flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight">
-              <span className="text-gradient">NEXORA</span>
-            </span>
-          </motion.a>
-
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm text-muted hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-            <motion.a
-              href="#iletisim"
-              className="ml-4 px-5 py-2.5 text-sm font-medium bg-gradient-to-r from-accent to-accent-dark text-white rounded-lg hover:shadow-lg hover:shadow-accent/25 transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Katil
-            </motion.a>
+      <nav className="mx-auto max-w-6xl flex items-center justify-between px-6 h-16 lg:h-[72px]">
+        <a href="#top" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+            <span className="font-display font-bold text-white text-sm">N</span>
           </div>
+          <span className="font-display font-semibold text-[15px] tracking-tight text-text">
+            Nexora
+          </span>
+        </a>
 
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-muted hover:text-foreground"
+        <div className="hidden md:flex items-center gap-1">
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="px-3.5 py-2 text-[13px] font-medium text-text-muted hover:text-text rounded-lg hover:bg-white/[0.04] transition-colors duration-200"
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="#iletisim"
+            className="ml-3 px-5 py-2 text-[13px] font-semibold bg-accent text-white rounded-lg hover:bg-accent-soft transition-colors duration-200"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            Katil
+          </a>
         </div>
-      </div>
+
+        <button
+          onClick={() => setOpen(!open)}
+          className="md:hidden p-2 text-text-muted hover:text-text"
+          aria-label="Menu"
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </nav>
 
       <AnimatePresence>
-        {isOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden glass-strong"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden glass border-t border-border"
           >
-            <div className="px-4 py-4 space-y-1">
-              {navLinks.map((link) => (
+            <div className="px-6 py-4 space-y-1">
+              {links.map((l) => (
                 <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 text-muted hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="block px-3 py-2.5 text-sm text-text-muted hover:text-text rounded-lg hover:bg-white/[0.04] transition-colors"
                 >
-                  {link.label}
+                  {l.label}
                 </a>
               ))}
               <a
                 href="#iletisim"
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 bg-gradient-to-r from-accent to-accent-dark text-white rounded-lg text-center font-medium"
+                onClick={() => setOpen(false)}
+                className="block mt-2 px-3 py-2.5 bg-accent text-white text-sm font-semibold rounded-lg text-center"
               >
                 Katil
               </a>
@@ -109,6 +95,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </header>
   );
 }
