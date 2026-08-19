@@ -4,15 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Nexora Toplulugu | Gelistirici Ekosistemi",
   description:
-    "Yazilim gelistiricilerini, tasarlmcilari ve teknoloji meraklilarini ayni cati altinda bulusturan kolektif bir gelistirici ekosistemi.",
-  keywords: [
-    "yazilim",
-    "topluluk",
-    "gelistirici",
-    "teknoloji",
-    "kodlama",
-    "ekosistem",
-  ],
+    "Yazilim gelistiricilerini, tasarimcilarini ve teknoloji meraklilarini ayni cati altinda bulusturan kolektif bir gelistirici ekosistemi.",
   openGraph: {
     title: "Nexora Toplulugu",
     description:

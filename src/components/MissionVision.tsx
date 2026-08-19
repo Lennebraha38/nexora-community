@@ -4,32 +4,6 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Target, Eye, Users, Globe, Rocket, Heart } from "lucide-react";
 
-function AnimatedSection({
-  children,
-  className = "",
-  id,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  id: string;
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ duration: 0.8 }}
-      className={className}
-    >
-      {children}
-    </motion.section>
-  );
-}
-
 export default function MissionVision() {
   const ref1 = useRef(null);
   const ref2 = useRef(null);
@@ -38,7 +12,7 @@ export default function MissionVision() {
 
   return (
     <div className="relative">
-      <AnimatedSection id="misyon" className="py-24 lg:py-32">
+      <section id="misyon" className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -84,7 +58,6 @@ export default function MissionVision() {
             </motion.div>
 
             <motion.div
-              ref={ref1}
               initial={{ opacity: 0, x: 50 }}
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -129,13 +102,13 @@ export default function MissionVision() {
             </motion.div>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="glow-line" />
       </div>
 
-      <AnimatedSection id="vizyon" className="py-24 lg:py-32">
+      <section id="vizyon" className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -170,7 +143,6 @@ export default function MissionVision() {
             </motion.div>
 
             <motion.div
-              ref={ref2}
               initial={{ opacity: 0, x: 50 }}
               animate={inView2 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -216,7 +188,7 @@ export default function MissionVision() {
             </motion.div>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
     </div>
   );
 }
