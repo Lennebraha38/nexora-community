@@ -3,13 +3,13 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Users, HeartHandshake, Lightbulb, Target, Eye } from "lucide-react";
 
-function R({ children, c = "", d = 0 }: { children: React.ReactNode; c?: string; d?: number }) {
+function R({ children, className = "", d = 0 }: { children: React.ReactNode; className?: string; d?: number }) {
   const ref = useRef(null);
   const v = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 24 }} animate={v ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: d, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-      className={c}>
+      className={className}>
       {children}
     </motion.div>
   );
