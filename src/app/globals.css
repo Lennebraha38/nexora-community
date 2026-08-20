@@ -1,48 +1,26 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg: #07070a;
-  --color-bg-1: #0d0d12;
-  --color-bg-2: #131319;
-  --color-bg-3: #191920;
-  --color-text: #f0f0f2;
-  --color-text-2: #9d9daa;
-  --color-text-3: #5c5c6b;
-  --color-accent: #7c5cfc;
-  --color-accent-2: #9b7fff;
-  --color-cyan: #36d6e7;
-  --color-border: rgba(255,255,255,0.05);
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-body: "DM Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
-@font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2") format("woff2");
-}
-@font-face {
-  font-family: "DM Sans";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAkJxhTmH3.woff2") format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2") format("woff2");
-}
+@font-face{font-family:"Space Grotesk";font-style:normal;font-weight:300 700;font-display:swap;src:url("https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2") format("woff2")}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:300 700;font-display:swap;src:url("https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAkJxhTmH3.woff2") format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 700;font-display:swap;src:url("https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2") format("woff2")}
 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{background:#07070a;color:#f0f0f2;font-family:"DM Sans",system-ui,sans-serif;overflow-x:hidden}
-::selection{background:rgba(124,92,252,0.3);color:#fff}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:#07070a}
-::-webkit-scrollbar-thumb{background:#2a2a35;border-radius:2px}
+
+body{
+  background:#000;
+  color:#fff;
+  font-family:"DM Sans",system-ui,sans-serif;
+  overflow-x:hidden;
+}
+
+::selection{background:rgba(0,140,255,0.3);color:#fff}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#333;border-radius:2px}

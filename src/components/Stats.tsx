@@ -2,27 +2,26 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
-function Num({ target, s = "", inView, d }: { target: number; s?: string; inView: boolean; d: number }) {
-  const [v, setV] = useState(0);
+function Num({ t, s = "", v, d }: { t: number; s?: string; v: boolean; d: number }) {
+  const [n, setN] = useState(0);
   useEffect(() => {
-    if (!inView) return;
-    const t = setTimeout(() => {
+    if (!v) return;
+    const to = setTimeout(() => {
       let st = 0;
-      const inc = target / 112;
       const iv = setInterval(() => {
-        st += inc;
-        if (st >= target) { setV(target); clearInterval(iv); } else setV(Math.floor(st));
+        st += t / 110;
+        if (st >= t) { setN(t); clearInterval(iv); } else setN(Math.floor(st));
       }, 16);
       return () => clearInterval(iv);
     }, d);
-    return () => clearTimeout(t);
-  }, [inView, target, d]);
-  return <span>{v.toLocaleString()}{s}</span>;
+    return () => clearTimeout(to);
+  }, [v, t, d]);
+  return <span>{n.toLocaleString()}{s}</span>;
 }
 
 export default function Stats() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const v = useInView(ref, { once: true, margin: "-30px" });
   const items = [
     { t: 2500, s: "+", l: "Uye" },
     { t: 150, s: "+", l: "Proje" },
@@ -30,25 +29,21 @@ export default function Stats() {
     { t: 30, s: "+", l: "Sehir" },
   ];
   return (
-    <section className="relative bg-bg">
-      <div className="relative mx-auto max-w-[1100px] px-6 py-20 md:py-28">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number] }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 p-8 md:p-10 rounded-3xl border border-white/[0.04] bg-bg-1"
-        >
+    <section className="max-w-[1200px] mx-auto px-4 md:px-6 pb-4">
+      <motion.div ref={ref} initial={{ opacity: 0, y: 14 }} animate={v ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+        className="rounded-3xl border border-white/[0.06] bg-[#0a0a0a] px-6 py-10 md:p-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {items.map((x, i) => (
             <div key={x.l} className="text-center">
-              <div className="font-display font-bold text-[clamp(1.8rem,3.5vw,2.8rem)] tracking-tight bg-gradient-to-b from-white to-[#9d9daa] bg-clip-text text-transparent">
-                <Num target={x.t} s={x.s} inView={inView} d={i * 100} />
+              <div className="font-display font-bold text-[clamp(2rem,4vw,3rem)] tracking-tight text-white">
+                <Num t={x.t} s={x.s} v={v} d={i * 90} />
               </div>
-              <p className="text-[#5c5c6b] text-[10px] font-mono uppercase tracking-[0.2em] mt-2">{x.l}</p>
+              <p className="text-white/20 text-[10px] font-mono uppercase tracking-[0.25em] mt-2">{x.l}</p>
             </div>
           ))}
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

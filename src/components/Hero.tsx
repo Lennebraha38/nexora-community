@@ -2,7 +2,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
-function Particles() {
+function Dots() {
   const c = useRef<HTMLCanvasElement>(null);
   const draw = useCallback(() => {
     const el = c.current;
@@ -20,38 +20,24 @@ function Particles() {
     };
     resize();
     addEventListener("resize", resize);
-    const pts: { x: number; y: number; vx: number; vy: number }[] = [];
-    const n = Math.min(50, Math.floor(innerWidth / 30));
-    for (let i = 0; i < n; i++)
-      pts.push({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-      });
+    const p: { x: number; y: number; vx: number; vy: number }[] = [];
+    for (let i = 0; i < Math.min(40, innerWidth / 35); i++)
+      p.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2 });
     const loop = () => {
-      const w = innerWidth, h = innerHeight;
-      ctx.clearRect(0, 0, w, h);
-      for (const p of pts) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(124,92,252,0.2)";
-        ctx.fill();
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+      for (const d of p) {
+        d.x += d.vx; d.y += d.vy;
+        if (d.x < 0 || d.x > innerWidth) d.vx *= -1;
+        if (d.y < 0 || d.y > innerHeight) d.vy *= -1;
+        ctx.beginPath(); ctx.arc(d.x, d.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,140,255,0.15)"; ctx.fill();
       }
-      for (let i = 0; i < pts.length; i++)
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 100) {
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = `rgba(124,92,252,${0.04 * (1 - d / 100)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+      for (let i = 0; i < p.length; i++)
+        for (let j = i + 1; j < p.length; j++) {
+          const dx = p[i].x - p[j].x, dy = p[i].y - p[j].y, dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath(); ctx.moveTo(p[i].x, p[i].y); ctx.lineTo(p[j].x, p[j].y);
+            ctx.strokeStyle = `rgba(0,140,255,${0.03 * (1 - dist / 120)})`; ctx.lineWidth = 0.5; ctx.stroke();
           }
         }
       id = requestAnimationFrame(loop);
@@ -59,98 +45,74 @@ function Particles() {
     loop();
     return () => { cancelAnimationFrame(id); removeEventListener("resize", resize); };
   }, []);
-  useEffect(() => { const cl = draw(); return cl; }, [draw]);
-  return <canvas ref={c} className="absolute inset-0 pointer-events-none" aria-hidden="true" />;
+  useEffect(() => { const c = draw(); return c; }, [draw]);
+  return <canvas ref={c} className="absolute inset-0" aria-hidden="true" />;
 }
 
-const v = {
-  hidden: { opacity: 0, y: 20 },
-  show: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.65, delay: 0.1 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] as [number, number, number, number] },
-  }),
-};
+const f = (i: number) => ({
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.7, delay: 0.2 + i * 0.12, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+});
 
 export default function Hero() {
   return (
-    <section
-      id="top"
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#07070a]"
-    >
-      <Particles />
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-accent/[0.03] rounded-full blur-[150px]" />
-      <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-cyan/[0.02] rounded-full blur-[130px]" />
+    <section id="top" data-nav className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <Dots />
+      <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] bg-[#008cff]/[0.03] rounded-full blur-[160px]" />
+      <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] bg-[#0066cc]/[0.02] rounded-full blur-[140px]" />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-        <motion.div variants={v} initial="hidden" animate="show" custom={0} className="mb-8">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-[#9d9daa] text-[11px] font-mono tracking-wide uppercase">
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        <motion.div {...f(0)} className="mb-8">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/8 text-white/40 text-[11px] font-mono tracking-widest uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             Topluluk aktif
           </span>
         </motion.div>
 
         <motion.h1
-          variants={v} initial="hidden" animate="show" custom={1}
-          className="font-display font-bold text-[clamp(3rem,8vw,6.5rem)] leading-[0.9] tracking-[-0.04em] mb-6"
-          style={{ textWrap: "balance" }}
+          {...f(1)}
+          className="font-display font-bold text-[clamp(3.5rem,10vw,8rem)] leading-[0.88] tracking-[-0.05em] mb-8"
         >
           Koddan
           <br />
-          <span className="bg-gradient-to-r from-accent via-accent-2 to-cyan bg-clip-text text-transparent">
-            Ekosisteme.
-          </span>
+          <span className="text-[#008cff]">Ekosisteme.</span>
         </motion.h1>
 
         <motion.p
-          variants={v} initial="hidden" animate="show" custom={2}
-          className="text-[#9d9daa] text-lg md:text-xl max-w-lg mx-auto mb-10 leading-relaxed"
+          {...f(2)}
+          className="text-white/40 text-lg md:text-xl max-w-lg mx-auto mb-12 leading-relaxed"
         >
           Takildigin an destek buldugun, fikirlerini projelere donusturdugun kolektif ekosistem.
         </motion.p>
 
-        <motion.div variants={v} initial="hidden" animate="show" custom={3} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href="#iletisim"
-            className="group inline-flex items-center gap-2 px-8 py-3.5 bg-accent text-white font-semibold text-[15px] rounded-xl hover:bg-accent-2 transition-all duration-300 hover:shadow-[0_0_40px_rgba(124,92,252,0.3)]"
-          >
+        <motion.div {...f(3)} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="#iletisim" className="group inline-flex items-center gap-2 px-8 py-4 bg-[#008cff] text-white font-semibold rounded-full hover:bg-[#0077dd] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,140,255,0.3)]">
             Topluluga Katil
-            <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
-          <a
-            href="#ozellikler"
-            className="inline-flex items-center px-8 py-3.5 text-[#9d9daa] text-[15px] font-medium rounded-xl border border-white/[0.06] hover:bg-white/[0.03] hover:text-white transition-all duration-300"
-          >
+          <a href="#ozellikler" className="inline-flex items-center px-8 py-4 text-white/30 text-[15px] font-medium rounded-full border border-white/8 hover:bg-white/[0.03] hover:text-white/60 transition-all duration-300">
             Neler Sunuyoruz?
           </a>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
-        <motion.a
-          href="#misyon"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="flex flex-col items-center gap-2 text-[#5c5c6b] hover:text-accent-2 transition-colors"
-        >
-          <span className="text-[9px] font-mono uppercase tracking-[0.3em]">Kesfet</span>
-          <motion.svg
-            animate={{ y: [0, 4, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-          >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <a href="#misyon" className="flex flex-col items-center gap-2 text-white/15 hover:text-[#008cff]/60 transition-colors">
+          <span className="text-[9px] font-mono uppercase tracking-[0.3em]">Asagi</span>
+          <motion.svg animate={{ y: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </motion.svg>
-        </motion.a>
-      </div>
-
-      {/* BOTTOM EDGE - buyuk ayirici */}
-      <div className="absolute bottom-0 inset-x-0">
-        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-        <div className="h-24 bg-gradient-to-t from-bg-1 to-transparent" />
-      </div>
+        </a>
+      </motion.div>
     </section>
   );
 }

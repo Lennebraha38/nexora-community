@@ -12,24 +12,20 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [show, setShow] = useState(false);
+  const [scroll, setScroll] = useState(false);
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 80);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const s = () => setScroll(window.scrollY > 100);
+    window.addEventListener("scroll", s, { passive: true });
+    return () => window.removeEventListener("scroll", s);
   }, []);
 
   useEffect(() => {
-    const secs = document.querySelectorAll("section[id]");
+    const secs = document.querySelectorAll("[data-nav]");
     const obs = new IntersectionObserver(
-      (e) => {
-        e.forEach((x) => {
-          if (x.isIntersecting) setActive(x.target.id);
-        });
-      },
-      { rootMargin: "-35% 0px -60% 0px" }
+      (e) => e.forEach((x) => { if (x.isIntersecting) setActive(x.target.id); }),
+      { rootMargin: "-40% 0px -55% 0px" }
     );
     secs.forEach((s) => obs.observe(s));
     return () => obs.disconnect();
@@ -37,34 +33,19 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Hero'da gosterilen basit logo - scroll yokken */}
-      <div
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-          show ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+        className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4"
       >
-        <div className="flex items-center justify-between px-6 lg:px-10 h-[72px] max-w-[1200px] mx-auto">
-          <a href="#top" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-cyan flex items-center justify-center">
-              <span className="font-display font-bold text-white text-[13px]">N</span>
-            </div>
-            <span className="font-display font-semibold text-[16px] tracking-[-0.02em]">
-              Nexora
-            </span>
-          </a>
-        </div>
-      </div>
-
-      {/* Scroll'dan sonra gorunen floating nav */}
-      <motion.div
-        initial={false}
-        animate={{ y: show ? 0 : -100, opacity: show ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
-      >
-        <nav className="flex items-center gap-2 px-2 py-2 rounded-2xl bg-[#131319]/90 backdrop-blur-xl border border-white/[0.06] shadow-2xl shadow-black/50">
+        <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full border transition-all duration-500 ${
+          scroll
+            ? "bg-black/80 backdrop-blur-xl border-white/10"
+            : "bg-transparent border-transparent"
+        }`}>
           <a href="#top" className="flex items-center gap-2 px-3 py-1.5 mr-1">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-accent to-cyan flex items-center justify-center">
+            <div className="w-6 h-6 rounded-md bg-[#008cff] flex items-center justify-center">
               <span className="font-display font-bold text-white text-[10px]">N</span>
             </div>
           </a>
@@ -73,38 +54,30 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              className={`relative px-3.5 py-[6px] text-[12px] font-medium rounded-xl transition-colors duration-200 ${
-                active === l.href.replace("#", "")
-                  ? "text-white"
-                  : "text-[#5c5c6b] hover:text-[#9d9daa]"
+              className={`relative px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors ${
+                active === l.href.replace("#", "") ? "text-white" : "text-white/30 hover:text-white/60"
               }`}
             >
               {active === l.href.replace("#", "") && (
                 <motion.div
-                  layoutId="pill"
-                  className="absolute inset-0 bg-white/[0.07] rounded-xl"
-                  transition={{ type: "spring", duration: 0.35, bounce: 0.12 }}
+                  layoutId="np"
+                  className="absolute inset-0 bg-white/8 rounded-full"
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}
               <span className="relative z-10">{l.label}</span>
             </a>
           ))}
 
-          <a
-            href="#iletisim"
-            className="ml-1 px-4 py-[6px] text-[12px] font-semibold bg-accent text-white rounded-xl hover:bg-accent-2 transition-colors"
-          >
+          <a href="#iletisim" className="ml-1 px-4 py-1.5 text-[12px] font-semibold bg-[#008cff] text-white rounded-full">
             Katil
           </a>
-        </nav>
-      </motion.div>
+        </div>
+      </motion.nav>
 
-      {/* Mobile */}
       <button
         onClick={() => setOpen(!open)}
-        className={`fixed top-4 right-4 z-50 md:hidden p-2.5 rounded-xl bg-[#131319]/90 backdrop-blur-xl border border-white/[0.06] text-[#9d9daa] hover:text-white transition-all ${
-          show || open ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className="fixed top-4 right-4 z-50 md:hidden p-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 text-white/50 hover:text-white"
         aria-label="Menu"
       >
         {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -116,33 +89,31 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-[#07070a]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center"
+            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-4"
           >
-            <div className="space-y-2">
-              {links.map((l, i) => (
-                <motion.a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06 }}
-                  className="block text-center px-8 py-4 text-xl font-display font-semibold text-[#9d9daa] hover:text-white transition-colors"
-                >
-                  {l.label}
-                </motion.a>
-              ))}
+            {links.map((l, i) => (
               <motion.a
-                href="#iletisim"
+                key={l.href}
+                href={l.href}
                 onClick={() => setOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 }}
-                className="block mt-6 mx-auto px-10 py-3.5 bg-accent text-white text-lg font-semibold rounded-xl text-center w-fit"
+                transition={{ delay: i * 0.05 }}
+                className="text-2xl font-display font-bold text-white/40 hover:text-white transition-colors"
               >
-                Katil
+                {l.label}
               </motion.a>
-            </div>
+            ))}
+            <motion.a
+              href="#iletisim"
+              onClick={() => setOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 px-8 py-3 bg-[#008cff] text-white font-semibold rounded-full"
+            >
+              Katil
+            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>
