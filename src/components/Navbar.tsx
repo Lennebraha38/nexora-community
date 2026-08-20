@@ -12,11 +12,11 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scroll, setScroll] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    const s = () => setScroll(window.scrollY > 100);
+    const s = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", s, { passive: true });
     return () => window.removeEventListener("scroll", s);
   }, []);
@@ -33,35 +33,36 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
+      <motion.header
+        initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
         className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4"
       >
-        <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full border transition-all duration-500 ${
-          scroll
-            ? "bg-black/80 backdrop-blur-xl border-white/10"
-            : "bg-transparent border-transparent"
+        <div className={`flex items-center gap-1 px-2 py-1.5 rounded-full transition-all duration-500 ${
+          scrolled
+            ? "bg-[#0a0916]/90 backdrop-blur-xl border border-neon-purple/20 shadow-[0_0_30px_rgba(168,85,247,0.1)]"
+            : "bg-transparent border border-transparent"
         }`}>
-          <a href="#top" className="flex items-center gap-2 px-3 py-1.5 mr-1">
-            <div className="w-6 h-6 rounded-md bg-[#008cff] flex items-center justify-center">
-              <span className="font-display font-bold text-white text-[10px]">N</span>
+          <a href="#top" className="flex items-center gap-2 pl-2 pr-3 py-1 mr-1">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-neon-purple to-neon-cyan flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              <span className="font-display font-bold text-white text-[11px]">N</span>
             </div>
+            <span className="font-display font-semibold text-[13px] tracking-tight">Nexora</span>
           </a>
 
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className={`relative px-3 py-1.5 text-[12px] font-medium rounded-full transition-colors ${
-                active === l.href.replace("#", "") ? "text-white" : "text-white/30 hover:text-white/60"
+              className={`relative px-3.5 py-1.5 text-[12px] font-medium rounded-full transition-colors ${
+                active === l.href.replace("#", "") ? "text-white" : "text-white/35 hover:text-white/70"
               }`}
             >
               {active === l.href.replace("#", "") && (
                 <motion.div
-                  layoutId="np"
-                  className="absolute inset-0 bg-white/8 rounded-full"
+                  layoutId="navglow"
+                  className="absolute inset-0 bg-white/10 rounded-full border border-neon-purple/25"
                   transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}
@@ -69,15 +70,17 @@ export default function Navbar() {
             </a>
           ))}
 
-          <a href="#iletisim" className="ml-1 px-4 py-1.5 text-[12px] font-semibold bg-[#008cff] text-white rounded-full">
+          <a href="#iletisim" className="btn-neon ml-1 px-4 py-1.5 text-[12px] font-semibold text-white rounded-full">
             Katil
           </a>
         </div>
-      </motion.nav>
+      </motion.header>
 
       <button
         onClick={() => setOpen(!open)}
-        className="fixed top-4 right-4 z-50 md:hidden p-2.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 text-white/50 hover:text-white"
+        className={`fixed top-4 right-4 z-50 md:hidden p-2.5 rounded-full bg-[#0a0916]/90 backdrop-blur-xl border border-neon-purple/20 text-white/60 hover:text-white transition-all ${
+          scrolled || open ? "opacity-100" : "opacity-0"
+        }`}
         aria-label="Menu"
       >
         {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -89,8 +92,9 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-4"
+            className="fixed inset-0 z-40 bg-[#05050a]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center"
           >
+            <div className="absolute inset-0 bg-grid opacity-40" />
             {links.map((l, i) => (
               <motion.a
                 key={l.href}
@@ -98,8 +102,8 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="text-2xl font-display font-bold text-white/40 hover:text-white transition-colors"
+                transition={{ delay: i * 0.06 }}
+                className="relative text-2xl font-display font-bold text-white/50 hover:text-white transition-colors my-2"
               >
                 {l.label}
               </motion.a>
@@ -109,8 +113,8 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="mt-4 px-8 py-3 bg-[#008cff] text-white font-semibold rounded-full"
+              transition={{ delay: 0.25 }}
+              className="btn-neon mt-8 px-8 py-3 text-white font-semibold rounded-full"
             >
               Katil
             </motion.a>

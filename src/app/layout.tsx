@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Nexora | Gelistirici Ekosistemi",
-  description: "Yazilim gelistiricilerini ayni cati altinda bulusturan kolektif gelistirici ekosistemi.",
+  description:
+    "Yazilim gelistiricilerini, tasarimcilarini ve teknoloji meraklilarini ayni cati altinda bulusturan kolektif gelistirici ekosistemi.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

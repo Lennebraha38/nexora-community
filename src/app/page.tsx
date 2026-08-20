@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="space-y-4">
+      <main>
         <Hero />
         <MissionVision />
         <Features />
